@@ -11,6 +11,7 @@ module Fluent
     config_param :icon_emoji, :string
     config_param :timezone,   :string, default: nil
     config_param :rtm,        :bool  , default: false
+    config_param :hook_url,   :string, default: nil
 
     attr_reader :slack
 
@@ -82,6 +83,7 @@ module Fluent
         @timezone   = conf['timezone'] || 'UTC'
         @team       = conf['team']
         @api_key    = conf['api_key']
+        @hook_url   = conf['hook_url']
       end
     end
 
@@ -103,7 +105,7 @@ module Fluent
     end
 
     def endpoint
-      URI.parse "https://#{@team}.slack.com/services/hooks/incoming-webhook?token=#{@api_key}"
+      @hook_url ? URI.parse(@hook_url) : URI.parse("https://#{@team}.slack.com/services/hooks/incoming-webhook?token=#{@api_key}")
     end
 
     def post_request(data)
